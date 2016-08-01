@@ -1,0 +1,44 @@
+plugins {
+    id "org.echocat.golang" version "0.1.2"
+    id "co.riiid.gradle" version "0.4.2"
+}
+
+final name = 'site24x7_exporter'
+group 'github.com/echocat/site24x7_exporter'
+version '0.1.0'
+
+dependencies {
+    build 'github.com/prometheus/client_golang'
+    build 'github.com/beorn7/perks'
+    build 'github.com/golang/protobuf'
+    build 'github.com/prometheus/client_model'
+    build 'github.com/prometheus/common'
+    build 'github.com/prometheus/procfs'
+    build 'github.com/matttproud/golang_protobuf_extensions'
+}
+golang {
+    build {
+        useTemporaryGopath = true
+        definitions = [
+                "main.name"       : name,
+                "main.version"    : version,
+                "main.group"      : group,
+        ]
+    }
+}
+
+github {
+    owner = 'echocat'
+    repo = name
+    token = "${System.getenv('GITHUB_TOKEN')}"
+    tagName = "v${version}"
+    targetCommitish = 'master'
+    name = version
+    assets = [
+            'build/out/site24x7_exporter-darwin-amd64',
+            'build/out/site24x7_exporter-linux-386',
+            'build/out/site24x7_exporter-linux-amd64',
+            'build/out/site24x7_exporter-windows-386.exe',
+            'build/out/site24x7_exporter-windows-amd64.exe',
+    ]
+}

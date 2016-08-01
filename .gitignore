@@ -1,0 +1,8 @@
+.build
+*.tar.gz
+*-stamp
+*.iml
+.idea
+build
+.gradle
+vendor
