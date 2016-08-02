@@ -9,6 +9,7 @@ RUN apk update && \
 # Build exporter
 RUN cd /tmp/buildroot/site24x7_exporter && \
 	export GOROOT=/usr/lib/go && \
+	chmod +x /tmp/buildroot/site24x7_exporter/gradlew && \
 	./gradlew --stacktrace --info -Dplatforms=linux-amd64 build && \
 	cp /tmp/buildroot/site24x7_exporter/build/out/site24x7_exporter-linux-amd64 /usr/bin/site24x7_exporter && \
 	chmod +x /usr/bin/site24x7_exporter
