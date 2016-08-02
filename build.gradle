@@ -5,7 +5,7 @@ plugins {
 
 final name = 'site24x7_exporter'
 group 'github.com/echocat/site24x7_exporter'
-version '0.1.0'
+version '0.1.1'
 
 dependencies {
     build 'github.com/prometheus/client_golang'
