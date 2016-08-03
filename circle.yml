@@ -10,7 +10,7 @@ machine:
 
 dependencies:
     override:
-        - bash ./gradlew --stacktrace --info -Dplatforms=linux-amd64
+        - bash ./gradlew --stacktrace --info -Dplatforms=linux-amd64 --console=plain build
         - ls -l build/out
         - docker info
         - docker build -t $DOCKER_TAG .
