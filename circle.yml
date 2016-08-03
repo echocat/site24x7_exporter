@@ -11,8 +11,7 @@ machine:
 
 dependencies:
     override:
-    - chmod +x ./gradlew
-    - ./gradlew --stacktrace --info -Dplatforms=linux-amd64
+    - bash ./gradlew --stacktrace --info -Dplatforms=linux-amd64
     - docker info
     - docker build -t $DOCKER_TAG .
     - docker tag $DOCKER_TAG $DOCKER_LATEST_TAG
