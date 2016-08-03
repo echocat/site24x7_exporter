@@ -16,6 +16,10 @@ dependencies:
         - docker info
         - docker build -t $DOCKER_TAG .
 
+test:
+    override:
+        - echo OK.
+
 deployment:
     hub:
         tag: /v.*/
