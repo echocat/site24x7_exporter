@@ -10,6 +10,7 @@ machine:
 
 dependencies:
     override:
+        # Remove the gitconfig is required to bring jgit from gradle-golang-plugin to work.
         - rm -f ~/.gitconfig
         - bash ./gradlew --stacktrace --info -Dplatforms=linux-amd64 --console=plain build
         - ls -l build/out
