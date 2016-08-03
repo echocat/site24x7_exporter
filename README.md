@@ -4,6 +4,8 @@ site24x7 exporter for prometheus.io, written in go.
 
 ## Get it
 
+### Binary distribution
+
 Download your version from the [releases page](https://github.com/echocat/site24x7_exporter/releases/latest). For older version see [archive page](https://github.com/echocat/site24x7_exporter/releases).
 
 Example:
@@ -12,6 +14,12 @@ sudo curl -SL https://github.com/echocat/site24x7_exporter/releases/download/v0.
     > /usr/bin/site24x7_exporter
 sudo chmod +x /usr/bin/site24x7_exporter
 ```
+
+### Docker image
+
+Image: ``docker pull echocat/site24x7_exporter``
+
+You can go to [Docker Hub Tags page](https://hub.docker.com/r/echocat/site24x7_exporter/tags/) to see all available tags or you can simply use ``latest``.
 
 ## Use it
 
@@ -44,22 +52,76 @@ Flags:
 
 ### Examples
 
+#### Binary distribution
+
 ```bash
 # Simply start the exporter with your token and listen on 0.0.0.0:9112
-site24x7_exporter -site24x7.token=mySecrectToken
+site24x7_exporter \
+    -site24x7.token=mySecrectToken
 
 # Start the exporter with your token and listen on 0.0.0.0:9112
 # ...it also secures the connector via SSL 
-site24x7_exporter -listen.address=:8443 \
+site24x7_exporter \
+    -listen.address=:8443 \
     -web.tls-cert=my.server.com.pem
 
 # Simply start the exporter with your token and listen on 0.0.0.0:9112
 # ...secures the connector via SSL
 # ...and requires client certificates signed by your authority
-site24x7_exporter -listen.address=:8443 \
+site24x7_exporter \
+    -listen.address=:8443 \
     -web.tls-cert=my.server.com.pem \
     -web.tls-client-ca=ca.pem
 ```
+
+#### Docker image
+
+```bash
+# Simply start the exporter with your token and listen on 0.0.0.0:9112
+docker run -p9112:9112 echocat/site24x7_exporter \
+    -site24x7.token=mySecrectToken
+
+# Start the exporter with your token and listen on 0.0.0.0:9112
+# ...it also secures the connector via SSL 
+docker run -p9112:9112 -v/etc/certs:/etc/certs:ro echocat/site24x7_exporter \
+    -listen.address=:8443 \
+    -web.tls-cert=/etc/certs/my.server.com.pem
+
+# Simply start the exporter with your token and listen on 0.0.0.0:9112
+# ...secures the connector via SSL
+# ...and requires client certificates signed by your authority
+docker run -p9112:9112 -v/etc/certs:/etc/certs:ro echocat/site24x7_exporter \
+    -listen.address=:8443 \
+    -web.tls-cert=my.server.com.pem \
+    -web.tls-client-ca=ca.pem
+```
+
+## Metrics
+
+### ``site24x7.monitor.status``
+
+**Type**: Counter
+
+#### Labels
+
+| Name | Example | Description |
+| -- | -- | -- |
+| ``monitorId`` | ``123456789012345678`` | Internal ID assigned by site24x7 of monitor |
+| ``monitorDisplayName`` | ``My service`` | Display name assigned by you of monitor |
+| ``monitorGroupId`` | ``123456789012345678`` | Internal ID assigned by site24x7 of monitor group (optional) |
+| ``monitorGroupDisplayName`` | ``My data center`` | Display name assigned by you of monitor group  (optional) |
+
+#### Possible values
+
+| Value | Description |
+| -- | -- |
+| ``0`` | Down |
+| ``1`` | Up |
+| ``2`` | Trouble |
+| ``5`` | Suspended |
+| ``7`` | Maintenance |
+| ``9`` | Discovery |
+| ``10`` | Discovery Error |
 
 ## Build it
 
