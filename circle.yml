@@ -15,7 +15,7 @@ machine:
 
 dependencies:
     override:
-        - export PATH=$JAVA_HOME/bin:$PATH
+        - rm -f `which java`
         - java -version
         - $JAVA_HOME/bin/java -version
         - bash ./gradlew --stacktrace --info -Dplatforms=linux-amd64 --console=plain build
