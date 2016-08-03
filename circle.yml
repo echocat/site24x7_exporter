@@ -22,7 +22,7 @@ test:
 
 deployment:
     devel:
-        brach: /.*/
+        branch: /.*/
         commands:
             - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
             - docker tag $DOCKER_TAG $DOCKER_TAG:devel-${CIRCLE_BRANCH}
