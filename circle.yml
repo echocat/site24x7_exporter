@@ -21,7 +21,13 @@ test:
         - echo OK.
 
 deployment:
-    hub:
+    devel:
+        brach: /.*/
+        commands:
+            - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+            - docker tag $DOCKER_TAG $DOCKER_TAG:devel-${CIRCLE_BRANCH}
+            - docker push $DOCKER_TAG:devel-${CIRCLE_BRANCH}
+    release:
         tag: /v.*/
         commands:
             - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
