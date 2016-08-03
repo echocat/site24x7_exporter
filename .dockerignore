@@ -1,6 +1,6 @@
 .git
 *.iml
 .idea
-build
+build/gopath
 .gradle
 vendor

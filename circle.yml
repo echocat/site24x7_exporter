@@ -1,0 +1,26 @@
+machine:
+    java:
+        version: openjdk8
+    services:
+        - docker
+    environment:
+        DOCKER_USER: echocatbot
+        DOCKER_EMAIL: contact@echocat.org
+        DOCKER_TAG: echocat/site24x7_exporter:$CIRCLE_TAG
+        DOCKER_LATEST_TAG: echocat/site24x7_exporter:latest
+
+dependencies:
+    override:
+    - chmod +x ./gradlew
+    - ./gradlew --stacktrace --info -Dplatforms=linux-amd64
+    - docker info
+    - docker build -t $DOCKER_TAG .
+    - docker tag $DOCKER_TAG $DOCKER_LATEST_TAG
+
+deployment:
+    hub:
+        branch: /v.*/
+            commands:
+            - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+            - docker push $DOCKER_TAG
+            - docker push $DOCKER_LATEST_TAG
