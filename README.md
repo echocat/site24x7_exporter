@@ -105,7 +105,7 @@ docker run -p9112:9112 -v/etc/certs:/etc/certs:ro echocat/site24x7_exporter \
 #### Labels
 
 | Name | Example | Description |
-| -- | -- | -- |
+| ---- | ------- | ----------- |
 | ``monitorId`` | ``123456789012345678`` | Internal ID assigned by site24x7 of monitor |
 | ``monitorDisplayName`` | ``My service`` | Display name assigned by you of monitor |
 | ``monitorGroupId`` | ``123456789012345678`` | Internal ID assigned by site24x7 of monitor group (optional) |
@@ -114,7 +114,7 @@ docker run -p9112:9112 -v/etc/certs:/etc/certs:ro echocat/site24x7_exporter \
 #### Possible values
 
 | Value | Description |
-| -- | -- |
+| ----- | ----------- |
 | ``0`` | Down |
 | ``1`` | Up |
 | ``2`` | Trouble |
