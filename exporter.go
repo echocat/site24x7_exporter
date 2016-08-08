@@ -10,6 +10,8 @@ import (
 	"net/url"
 	"sync"
 	"time"
+	"crypto/tls"
+	"github.com/echocat/site24x7_exporter/utils"
 )
 
 var (
@@ -44,6 +46,9 @@ func NewSite24x7Exporter(accessToken string, timeout time.Duration) *Site24x7Exp
 		}),
 		client: &http.Client{
 			Transport: &http.Transport{
+				TLSClientConfig: &tls.Config{
+					RootCAs: utils.LoadInternalCaBundle(),
+				},
 				Dial: func(netw, addr string) (net.Conn, error) {
 					c, err := net.DialTimeout(netw, addr, timeout)
 					if err != nil {

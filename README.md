@@ -10,7 +10,7 @@ Download your version from the [releases page](https://github.com/echocat/site24
 
 Example:
 ```bash
-sudo curl -SL https://github.com/echocat/site24x7_exporter/releases/download/v0.1.0/site24x7_exporter-linux-amd64 \
+sudo curl -SL https://github.com/echocat/site24x7_exporter/releases/download/v0.1.4/site24x7_exporter-linux-amd64 \
     > /usr/bin/site24x7_exporter
 sudo chmod +x /usr/bin/site24x7_exporter
 ```
