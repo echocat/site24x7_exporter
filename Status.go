@@ -23,7 +23,7 @@ func (instance *Status) Describe(ch chan<- *prometheus.Desc) {
 
 func (instance *Status) Desc() *prometheus.Desc {
 	return prometheus.NewDesc(
-		fmt.Sprintf("%s.monitor.status", namespace),
+		fmt.Sprintf("%s_monitor_status", namespace),
 		"Was is the status of the target monitor?",
 		[]string{},
 		prometheus.Labels{},
