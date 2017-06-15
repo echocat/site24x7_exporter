@@ -8,12 +8,12 @@ import (
 )
 
 type Status struct {
-	CurrentStatus  *CurrentStatus
+	CurrentStatus *CurrentStatus
 }
 
 func NewStatusFor(currentStatus *CurrentStatus) *Status {
 	return &Status{
-		CurrentStatus:  currentStatus,
+		CurrentStatus: currentStatus,
 	}
 }
 
@@ -33,7 +33,7 @@ func (instance *Status) Desc() *prometheus.Desc {
 func (instance *Status) Collect(ch chan<- prometheus.Metric) {
 	for _, monitor := range (*instance).CurrentStatus.Data.Monitors {
 		element := &StatusElement{
-			Parent: instance,
+			Parent:  instance,
 			Monitor: monitor,
 		}
 		ch <- element
@@ -41,9 +41,9 @@ func (instance *Status) Collect(ch chan<- prometheus.Metric) {
 	for _, monitorGroup := range (*instance).CurrentStatus.Data.MonitorGroups {
 		for _, monitor := range monitorGroup.Monitors {
 			element := &StatusElement{
-				Parent: instance,
+				Parent:       instance,
 				MonitorGroup: monitorGroup,
-				Monitor: monitor,
+				Monitor:      monitor,
 			}
 			ch <- element
 		}
@@ -57,16 +57,12 @@ type StatusElement struct {
 }
 
 func (instance *StatusElement) Write(out *dto.Metric) error {
-	out.Counter = &dto.Counter{Value: proto.Float64(float64(instance.Monitor.Status))}
+	out.Gauge = &dto.Gauge{Value: proto.Float64(float64(instance.Monitor.Status))}
 	label := []*dto.LabelPair{
 		labelPairFor("monitorId", instance.Monitor.Id),
 		labelPairFor("monitorDisplayName", instance.Monitor.Name),
-	}
-	if instance.MonitorGroup.Id != "" {
-		label = append(label,
-			labelPairFor("monitorGroupId", instance.MonitorGroup.Id),
-			labelPairFor("monitorGroupDisplayName", instance.MonitorGroup.Name),
-		)
+		labelPairFor("monitorGroupId", instance.MonitorGroup.Id),
+		labelPairFor("monitorGroupDisplayName", instance.MonitorGroup.Name),
 	}
 	out.Label = label
 	return nil
