@@ -57,7 +57,15 @@ type AttributesElement struct {
 }
 
 func (instance *AttributesElement) Write(out *dto.Metric) error {
-	out.Gauge = &dto.Gauge{Value: proto.Float64(float64(instance.Monitor.AttributeValue))}
+	var attrValue, err = instance.Monitor.AttributeValue()
+	// Eat the error by setting |attrValue| to something invalid. We don't want
+	// a '-' entry to prevent collecting other metrics, and we must write
+	// something to |out| in this pass.
+	if err != nil {
+		attrValue = -1
+	}
+
+	out.Gauge = &dto.Gauge{Value: proto.Float64(float64(attrValue))}
 	label := []*dto.LabelPair{
 		labelPairFor("attributeKey", instance.Monitor.AttributeKey),
 		labelPairFor("monitorId", instance.Monitor.Id),
