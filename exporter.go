@@ -1,8 +1,10 @@
 package main
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
+	"github.com/echocat/site24x7_exporter/utils"
 	"github.com/prometheus/client_golang/prometheus"
 	"log"
 	"net"
@@ -10,8 +12,6 @@ import (
 	"net/url"
 	"sync"
 	"time"
-	"crypto/tls"
-	"github.com/echocat/site24x7_exporter/utils"
 )
 
 var (
@@ -107,16 +107,6 @@ func (instance *Site24x7Exporter) retrieveCurrentStatus() (*CurrentStatus, error
 	return &restObject, nil
 }
 
-func (instance *Site24x7Exporter) retrieveStatus() (*Status, error) {
-	currentStatus, err := instance.retrieveCurrentStatus()
-	if err != nil {
-		return nil, err
-	}
-	return NewStatusFor(
-		currentStatus,
-	), nil
-}
-
 // Describe describes all the metrics ever exported by the
 // exporter. It implements prometheus.Collector.
 func (instance *Site24x7Exporter) Describe(ch chan<- *prometheus.Desc) {
@@ -130,11 +120,12 @@ func (instance *Site24x7Exporter) Collect(ch chan<- prometheus.Metric) {
 	instance.mutex.Lock() // To protect metrics from concurrent collects.
 	defer instance.mutex.Unlock()
 
-	status, err := instance.retrieveStatus()
+	currentStatus, err := instance.retrieveCurrentStatus()
 	if err != nil {
-		log.Printf("Failed to retreive status. Cause: %v", err)
+		log.Printf("Failed to retreive current status. Cause: %v", err)
 		return
 	}
 
-	status.Collect(ch)
+	NewStatusFor(currentStatus).Collect(ch)
+	NewAttributesFor(currentStatus).Collect(ch)
 }

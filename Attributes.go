@@ -7,32 +7,32 @@ import (
 	dto "github.com/prometheus/client_model/go"
 )
 
-type Status struct {
+type Attributes struct {
 	CurrentStatus *CurrentStatus
 }
 
-func NewStatusFor(currentStatus *CurrentStatus) *Status {
-	return &Status{
+func NewAttributesFor(currentStatus *CurrentStatus) *Attributes {
+	return &Attributes{
 		CurrentStatus: currentStatus,
 	}
 }
 
-func (instance *Status) Describe(ch chan<- *prometheus.Desc) {
+func (instance *Attributes) Describe(ch chan<- *prometheus.Desc) {
 	ch <- instance.Desc()
 }
 
-func (instance *Status) Desc() *prometheus.Desc {
+func (instance *Attributes) Desc() *prometheus.Desc {
 	return prometheus.NewDesc(
-		fmt.Sprintf("%s_monitor_status", namespace),
-		"Was is the status of the target monitor?",
+		fmt.Sprintf("%s_monitor_attribute", namespace),
+		"Attributes of the target monitor",
 		[]string{},
 		prometheus.Labels{},
 	)
 }
 
-func (instance *Status) Collect(ch chan<- prometheus.Metric) {
+func (instance *Attributes) Collect(ch chan<- prometheus.Metric) {
 	for _, monitor := range (*instance).CurrentStatus.Data.Monitors {
-		element := &StatusElement{
+		element := &AttributesElement{
 			Parent:  instance,
 			Monitor: monitor,
 		}
@@ -40,7 +40,7 @@ func (instance *Status) Collect(ch chan<- prometheus.Metric) {
 	}
 	for _, monitorGroup := range (*instance).CurrentStatus.Data.MonitorGroups {
 		for _, monitor := range monitorGroup.Monitors {
-			element := &StatusElement{
+			element := &AttributesElement{
 				Parent:       instance,
 				MonitorGroup: monitorGroup,
 				Monitor:      monitor,
@@ -50,15 +50,24 @@ func (instance *Status) Collect(ch chan<- prometheus.Metric) {
 	}
 }
 
-type StatusElement struct {
-	Parent       *Status
+type AttributesElement struct {
+	Parent       *Attributes
 	MonitorGroup CurrentStatusMonitorGroup
 	Monitor      CurrentStatusMonitor
 }
 
-func (instance *StatusElement) Write(out *dto.Metric) error {
-	out.Gauge = &dto.Gauge{Value: proto.Float64(float64(instance.Monitor.Status))}
+func (instance *AttributesElement) Write(out *dto.Metric) error {
+	var attrValue, err = instance.Monitor.AttributeValue()
+	// Eat the error by setting |attrValue| to something invalid. We don't want
+	// a '-' entry to prevent collecting other metrics, and we must write
+	// something to |out| in this pass.
+	if err != nil {
+		attrValue = -1
+	}
+
+	out.Gauge = &dto.Gauge{Value: proto.Float64(float64(attrValue))}
 	label := []*dto.LabelPair{
+		labelPairFor("attributeKey", instance.Monitor.AttributeKey),
 		labelPairFor("monitorId", instance.Monitor.Id),
 		labelPairFor("monitorDisplayName", instance.Monitor.Name),
 		labelPairFor("monitorGroupId", instance.MonitorGroup.Id),
@@ -68,13 +77,6 @@ func (instance *StatusElement) Write(out *dto.Metric) error {
 	return nil
 }
 
-func (instance *StatusElement) Desc() *prometheus.Desc {
+func (instance *AttributesElement) Desc() *prometheus.Desc {
 	return instance.Parent.Desc()
-}
-
-func labelPairFor(name string, value string) *dto.LabelPair {
-	return &dto.LabelPair{
-		Name:  &name,
-		Value: &value,
-	}
 }
