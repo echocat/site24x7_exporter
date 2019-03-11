@@ -82,16 +82,16 @@ func (instance *Site24x7Exporter) createRequestFor(url *url.URL) *http.Request {
 
 func (instance *Site24x7Exporter) executeAndEvaluate(request *http.Request, target interface{}) error {
 	response, err := instance.client.Do(request)
-	defer func() {
-		io.Copy(ioutil.Discard, response.Body)
-		response.Body.Close()
-	}()
 	if err != nil {
 		return fmt.Errorf("Could not execute request %v. Got: %v", request.URL, err)
 	}
 	if response.StatusCode < 200 || response.StatusCode >= 400 {
 		return fmt.Errorf("Could not execute request %v. Got: %v - %v", request.URL, response.StatusCode, response.Status)
 	}
+	defer func() {
+		io.Copy(ioutil.Discard, response.Body)
+		response.Body.Close()
+	}()
 	decoder := json.NewDecoder(response.Body)
 	err = decoder.Decode(target)
 	if err != nil {
