@@ -12,6 +12,8 @@ import (
 	"net/url"
 	"sync"
 	"time"
+	"io"
+	"io/ioutil"
 )
 
 var (
@@ -80,6 +82,10 @@ func (instance *Site24x7Exporter) createRequestFor(url *url.URL) *http.Request {
 
 func (instance *Site24x7Exporter) executeAndEvaluate(request *http.Request, target interface{}) error {
 	response, err := instance.client.Do(request)
+	defer func() {
+		io.Copy(ioutil.Discard, response.Body)
+		response.Body.Close()
+	}()
 	if err != nil {
 		return fmt.Errorf("Could not execute request %v. Got: %v", request.URL, err)
 	}
