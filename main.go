@@ -16,9 +16,10 @@ const (
 )
 
 var (
-	name        = "site24x7_exporter"
-	version     = "devel"
-	description = ""
+	name     = "site24x7_exporter"
+	version  = "development"
+	revision = "development"
+	compiled = time.Now().Format("2006-01-02T15:04:05Z")
 
 	listenAddress = flag.String("web.listen-address", ":9112", "Address to listen on for web interface and telemetry.")
 	metricsPath   = flag.String("web.telemetry-path", "/metrics", "Path under which to expose metrics.")
@@ -50,8 +51,9 @@ func main() {
 }
 
 func parseUsage() {
-	flags := flag.CommandLine
+	flags := flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
 	flags.SetOutput(flagsBuffer)
+	flags.ErrorHandling()
 	flags.Usage = func() {
 		errorString := flagsBuffer.String()
 		if len(errorString) > 0 {
@@ -60,7 +62,11 @@ func parseUsage() {
 			printUsage(nil)
 		}
 	}
-	flags.Parse(os.Args[1:])
+	if err := flags.Parse(os.Args[1:]); err == flag.ErrHelp {
+		os.Exit(0)
+	} else if err != nil {
+		os.Exit(1)
+	}
 	assertUsage()
 }
 
@@ -79,10 +85,8 @@ func fail(err interface{}) {
 }
 
 func printUsage(err interface{}) {
-	fmt.Fprintf(os.Stderr, "%v (version: %v, url: https://github.com/echocat/site24x7_exporter)\n", name, version)
-	if description != "" {
-		fmt.Fprintf(os.Stderr, "%v\n", description)
-	}
+	fmt.Fprintf(os.Stderr, "%v (version: %v, revision: %v, build: %v)\n", name, version, revision, compiled)
+	fmt.Fprint(os.Stderr, "URL: https://github.com/echocat/site24x7_exporter\n")
 	fmt.Fprint(os.Stderr, "Author(s): Gregor Noczinski (gregor@noczinski.eu)\n")
 	fmt.Fprint(os.Stderr, "\n")
 

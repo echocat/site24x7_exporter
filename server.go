@@ -2,10 +2,10 @@ package main
 
 import (
 	"crypto/tls"
-	"github.com/prometheus/client_golang/prometheus"
+	"github.com/echocat/site24x7_exporter/utils"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"log"
 	"net/http"
-	"github.com/echocat/site24x7_exporter/utils"
 )
 
 type bufferedLogWriter struct {
@@ -25,7 +25,7 @@ func startServer(metricsPath, listenAddress, tlsCert, tlsPrivateKey, tlsClientCa
 		Addr:     listenAddress,
 		ErrorLog: createHttpServerLogWrapper(),
 	}
-	http.Handle(metricsPath, prometheus.Handler())
+	http.Handle(metricsPath, promhttp.Handler())
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`<html>
              <head><title>Site24x7 Exporter</title></head>

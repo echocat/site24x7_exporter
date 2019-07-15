@@ -123,51 +123,6 @@ docker run -p9112:9112 -v/etc/certs:/etc/certs:ro echocat/site24x7_exporter \
 | ``9`` | Discovery |
 | ``10`` | Discovery Error |
 
-## Build it
-
-### Precondition
-
-For building site24x7_exporter there is only:
-
-1. a compatible operating system (Linux, Windows or Mac OS X)
-2. and a working [Java 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html) installation required.
-
-There is no need for a working and installed Go installation (or anything else). The build system will download every dependency and build it if necessary.
-
-> **Hint:** The Go runtime build by the build system will be placed under ``~/.go/sdk``.
-
-### Run build process
-
-On Linux and Mac OS X:
-```bash
-# Build binaries (includes test)
-./gradlew build
-
-# Run tests (but do not build binaries)
-./gradlew test
-
-# Build binaries and release it on GitHub
-# Environment variable GITHUB_TOKEN is required
-./gradlew build githubRelease
-```
-
-On Windows:
-```bash
-# Build binaries (includes test)
-gradlew build
-
-# Run tests (but do not build binaries)
-gradlew test
-
-# Build binaries and release it on GitHub
-# Environment variable GITHUB_TOKEN is required
-gradlew build githubRelease
-```
-
-### Build artifacts
-
-* Compiled and lined binaries can be found under ``./build/out/site24x7_exporter-*``
-
 ## Contributing
 
 site24x7_exporter is an open source project of [echocat](https://echocat.org).

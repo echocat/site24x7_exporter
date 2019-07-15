@@ -1,5 +1,5 @@
+/.idea
 *.iml
-.idea
-build
-.gradle
-vendor
+/out
+/dist
+/var

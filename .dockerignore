@@ -1,6 +1,4 @@
-.git
+/.idea
 *.iml
-.idea
-build/gopath
-.gradle
-vendor
+/out
+/var
