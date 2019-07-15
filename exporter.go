@@ -12,6 +12,8 @@ import (
 	"net/url"
 	"sync"
 	"time"
+	"io"
+	"io/ioutil"
 )
 
 var (
@@ -86,6 +88,10 @@ func (instance *Site24x7Exporter) executeAndEvaluate(request *http.Request, targ
 	if response.StatusCode < 200 || response.StatusCode >= 400 {
 		return fmt.Errorf("Could not execute request %v. Got: %v - %v", request.URL, response.StatusCode, response.Status)
 	}
+	defer func() {
+		io.Copy(ioutil.Discard, response.Body)
+		response.Body.Close()
+	}()
 	decoder := json.NewDecoder(response.Body)
 	err = decoder.Decode(target)
 	if err != nil {
