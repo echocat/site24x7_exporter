@@ -21,19 +21,20 @@ var (
 	revision = "development"
 	compiled = time.Now().Format("2006-01-02T15:04:05Z")
 
-	listenAddress = flag.String("web.listen-address", ":9112", "Address to listen on for web interface and telemetry.")
-	metricsPath   = flag.String("web.telemetry-path", "/metrics", "Path under which to expose metrics.")
-	tlsCert       = flag.String("web.tls-cert", "", "Path to PEM file that conains the certificate (and optionally also the private key in PEM format).\n"+
+	flags         = flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
+	listenAddress = flags.String("web.listen-address", ":9112", "Address to listen on for web interface and telemetry.")
+	metricsPath   = flags.String("web.telemetry-path", "/metrics", "Path under which to expose metrics.")
+	tlsCert       = flags.String("web.tls-cert", "", "Path to PEM file that conains the certificate (and optionally also the private key in PEM format).\n"+
 		"\tThis should include the whole certificate chain.\n"+
 		"\tIf provided: The web socket will be a HTTPS socket.\n"+
 		"\tIf not provided: Only HTTP.")
-	tlsPrivateKey = flag.String("web.tls-private-key", "", "Path to PEM file that contains the private key (if not contained in web.tls-cert file).")
-	tlsClientCa   = flag.String("web.tls-client-ca", "", "Path to PEM file that conains the CAs that are trused for client connections.\n"+
+	tlsPrivateKey = flags.String("web.tls-private-key", "", "Path to PEM file that contains the private key (if not contained in web.tls-cert file).")
+	tlsClientCa   = flags.String("web.tls-client-ca", "", "Path to PEM file that conains the CAs that are trused for client connections.\n"+
 		"\tIf provided: Connecting clients should present a certificate signed by one of this CAs.\n"+
 		"\tIf not provided: Every client will be accepted.")
-	site24x7Token = flag.String("site24x7.token", "", "Token to access the API of site24x7.\n"+
+	site24x7Token = flags.String("site24x7.token", "", "Token to access the API of site24x7.\n"+
 		"\tSee: https://www.site24x7.com/app/client#/admin/developer/api")
-	site24x7Timeout = flag.Duration("site24x7.timeout", 5*time.Second, "Timeout for trying to get stats from site24x7.")
+	site24x7Timeout = flags.Duration("site24x7.timeout", 5*time.Second, "Timeout for trying to get stats from site24x7.")
 
 	flagsBuffer = &bytes.Buffer{}
 )
@@ -51,9 +52,7 @@ func main() {
 }
 
 func parseUsage() {
-	flags := flag.NewFlagSet(os.Args[0], flag.ContinueOnError)
 	flags.SetOutput(flagsBuffer)
-	flags.ErrorHandling()
 	flags.Usage = func() {
 		errorString := flagsBuffer.String()
 		if len(errorString) > 0 {
